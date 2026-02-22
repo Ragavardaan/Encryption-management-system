@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="fileApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Encryption</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg1: #071127;
+            --bg2: #0f1724;
+            --accent1: #6a11cb;
+            --accent2: #2575fc;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg1), var(--bg2));
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent1), var(--accent2));
+            color: white;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error {
+            color: #ff6b6b;
+            margin: 10px 0;
+        }
+        .success {
+            color: #51cf66;
+            margin: 10px 0;
+        }
+        .result {
+            word-break: break-all;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body ng-controller="FileController as fileCtrl">
+    <div class="container">
+        <!-- Encryption Section -->
+        <div class="card" ng-show="fileCtrl.view === 'encrypt'">
+            <h2><i class="fas fa-lock"></i> Encrypt File</h2>
+            <input type="file" class="input-field" 
+                   onchange="angular.element(this).scope().fileCtrl.onEncryptFileChange(this)">
+            <button class="btn" ng-click="fileCtrl.encrypt()" 
+                    ng-disabled="!fileCtrl.encryptFile">
+                Encrypt
+            </button>
+            <div class="success" ng-if="fileCtrl.encryptionKey">
+                <strong>Save this key for decryption:</strong>
+                <div class="result">{{fileCtrl.encryptionKey}}</div>
+            </div>
+            <div class="error" ng-if="fileCtrl.encryptError">{{fileCtrl.encryptError}}</div>
+        </div>
+
+        <!-- Decryption Section -->
+        <div class="card" ng-show="fileCtrl.view === 'decrypt'">
+            <h2><i class="fas fa-unlock"></i> Decrypt File</h2>
+            <input type="file" class="input-field" 
+                   onchange="angular.element(this).scope().fileCtrl.onDecryptFileChange(this)">
+            <input type="text" class="input-field" 
+                   ng-model="fileCtrl.decryptKey" 
+                   placeholder="Enter decryption key">
+            <button class="btn" ng-click="fileCtrl.decrypt()" 
+                    ng-disabled="!fileCtrl.decryptFile || !fileCtrl.decryptKey">
+                Decrypt
+            </button>
+            <div class="error" ng-if="fileCtrl.decryptError">{{fileCtrl.decryptError}}</div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" ng-click="fileCtrl.view = 'encrypt'"
+                    ng-class="{active: fileCtrl.view === 'encrypt'}">
+                Encryption
+            </button>
+            <button class="btn" ng-click="fileCtrl.view = 'decrypt'"
+                    ng-class="{active: fileCtrl.view === 'decrypt'}">
+                Decryption
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div class="card" ng-if="fileCtrl.resultFile">
+            <h3>Processed File</h3>
+            <a ng-href="{{fileCtrl.downloadUrl}}" class="btn" download>
+                Download {{fileCtrl.resultFile}}
+            </a>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="card" style="text-align: center;">
+            <button class="btn" onclick="window.location.href='../index.html'">
+                <i class="fas fa-home"></i> Back to Home
+            </button>
+        </div>
+    </div>
+
+    <script>
+    angular.module('fileApp', [])
+    .controller('FileController', ['$http', '$scope', function($http, $scope) {
+        var vm = this;
+        vm.view = 'encrypt';
+        vm.encryptFile = null;
+        vm.decryptFile = null;
+        vm.decryptKey = '';
+        vm.encryptionKey = '';
+        vm.resultFile = '';
+        
+        vm.onEncryptFileChange = function(element) {
+            vm.encryptFile = element.files[0];
+            vm.encryptionKey = '';
+            vm.encryptError = '';
+            vm.resultFile = '';
+            $scope.$apply();
+        };
+
+        vm.onDecryptFileChange = function(element) {
+            vm.decryptFile = element.files[0];
+            vm.decryptError = '';
+            vm.resultFile = '';
+            $scope.$apply();
+        };
+
+        vm.encrypt = function() {
+            if (!vm.encryptFile) {
+                vm.encryptError = 'Please select a file to encrypt';
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', vm.encryptFile);
+            formData.append('operation', 'encrypt');
+
+            $http.post('http://127.0.0.1:5000/file/process', formData, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).then(function(response) {
+                vm.encryptionKey = response.data.key;
+                vm.resultFile = response.data.filename;
+                vm.downloadUrl = 'http://127.0.0.1:5000/file/download/' + 
+                                encodeURIComponent(response.data.filename);
+                vm.encryptError = '';
+            }).catch(function(error) {
+                vm.encryptError = error.data?.error || 'Encryption failed';
+            });
+        };
+
+        vm.decrypt = function() {
+            if (!vm.decryptFile) {
+                vm.decryptError = 'Please select a file to decrypt';
+                return;
+            }
+            if (!vm.decryptKey) {
+                vm.decryptError = 'Please enter the decryption key';
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', vm.decryptFile);
+            formData.append('operation', 'decrypt');
+            formData.append('key', vm.decryptKey);
+
+            $http.post('http://127.0.0.1:5000/file/process', formData, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).then(function(response) {
+                vm.resultFile = response.data.filename;
+                vm.downloadUrl = 'http://127.0.0.1:5000/file/download/' + 
+                                encodeURIComponent(response.data.filename);
+                vm.decryptError = '';
+            }).catch(function(error) {
+                vm.decryptError = error.data?.error || 'Decryption failed';
+            });
+        };
+    }]);
+    </script>
+</body>
+</html>

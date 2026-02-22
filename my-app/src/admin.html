@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(45deg, #1a1a1a, #2c3e50);
+            color: white;
+            min-height: 100vh;
+        }
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body ng-controller="AdminController as adminCtrl">
+    <div class="admin-container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <a href="index.html" class="back-btn">Back to Home</a>
+        </div>
+        
+        <div class="users-section">
+            <h2>User Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="user in adminCtrl.users">
+                        <td>{{user.username}}</td>
+                        <td>{{user.role}}</td>
+                        <td>
+                            <button ng-click="adminCtrl.viewDetails(user)">View Details</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Check for admin access
+        if(localStorage.getItem('isAdmin') !== 'true') {
+            window.location.href = 'index.html';
+        }
+
+        angular.module('adminApp', [])
+        .controller('AdminController', ['$http', function($http) {
+            var vm = this;
+            
+            // Fetch users from backend
+            $http.get('http://localhost:5000/users')
+                .then(function(response) {
+                    vm.users = response.data;
+                }, function(error) {
+                    console.error('Error fetching users:', error);
+                });
+
+            vm.viewDetails = function(user) {
+                alert('Viewing details for user: ' + user.username);
+            };
+        }]);
+    </script>
+</body>
+</html>

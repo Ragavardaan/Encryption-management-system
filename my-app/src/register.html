@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="registerApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - Encryption Management</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Background animation */
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes floatUpDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #6a11cb, #2575fc, #1d2671, #c33764);
+      background-size: 400% 400%;
+      animation: gradientFlow 12s ease infinite;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 40px 30px;
+      border-radius: 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      width: 350px;
+      text-align: center;
+      animation: floatUpDown 6s ease-in-out infinite;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 22px;
+    }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+      transition: 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      box-shadow: 0 0 8px rgba(37, 117, 252, 0.6);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: #6a11cb;
+      pointer-events: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(37, 117, 252, 0.5);
+    }
+
+    p {
+      margin-top: 18px;
+      color: #eee;
+      font-size: 13px;
+    }
+
+    a {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Floating circles for background */
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      animation: floatUpDown 8s ease-in-out infinite;
+    }
+
+    .circle:nth-child(1) {
+      width: 120px; height: 120px;
+      top: 10%; left: 15%;
+      animation-delay: 0s;
+    }
+
+    .circle:nth-child(2) {
+      width: 180px; height: 180px;
+      bottom: 10%; right: 10%;
+      animation-delay: 2s;
+    }
+
+    .circle:nth-child(3) {
+      width: 150px; height: 150px;
+      bottom: 20%; left: 5%;
+      animation-delay: 4s;
+    }
+  </style>
+</head>
+
+<body ng-controller="RegisterController as regCtrl">
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+
+  <div class="container">
+    <h2>Create Account</h2>
+    <form ng-submit="regCtrl.register()">
+      <div class="input-group">
+        <input type="text" ng-model="regCtrl.username" placeholder="Username" required>
+      </div>
+      <div class="input-group">
+        <input type="password" ng-model="regCtrl.password" placeholder="Password" required>
+      </div>
+      <div class="input-group">
+        <select ng-model="regCtrl.role" required>
+          <option value="">Select Role</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+
+  <script>
+    angular.module('registerApp', [])
+      .controller('RegisterController', ['$http', '$window', function($http, $window) {
+        var vm = this;
+        vm.username = '';
+        vm.password = '';
+        vm.role = '';
+
+        vm.register = function() {
+          if (!vm.username || !vm.password || !vm.role) {
+            alert("Please fill all fields.");
+            return;
+          }
+
+          vm.role = 'user'; // enforce 'user' role
+
+          $http.post("http://localhost:5000/register", {
+            username: vm.username,
+            password: vm.password,
+            role: vm.role
+          })
+          .then(function(response) {
+            if (response.data.status === "success") {
+              alert("Registration successful! Please login.");
+              $window.location.href = "login.html";
+            } else {
+              alert(response.data.message);
+            }
+          }, function() {
+            alert("Error connecting to backend.");
+          });
+        };
+      }]);
+  </script>
+</body>
+</html>

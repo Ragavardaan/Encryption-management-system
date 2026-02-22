@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+<meta charset="UTF-8" />
+<title>Admin Dashboard</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<style>
+  /* Your original CSS styles - keep all of these as-is */
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(45deg, #1a1a1a, #2c3e50);
+    color: white;
+    min-height: 100vh;
+  }
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .back-btn {
+    padding: 10px 20px;
+    background: #34495e;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  th {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  button {
+    padding: 6px 12px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #3498db;
+  }
+</style>
+</head>
+<body ng-controller="AdminController as adminCtrl">
+
+<div class="admin-container">
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <a href="../index.html" class="back-btn">Back to Home</a>
+  </div>
+
+  <div class="users-section">
+    <h2>User Management</h2>
+
+    <table>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Role</th>
+      <th>Last Login</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="user in adminCtrl.users">
+      <td>{{user.username}}</td>
+      <td>{{user.role}}</td>
+      <td>{{user.last_login}}</td>
+    </tr>
+  </tbody>
+</table>
+
+    <!-- Show message if no users -->
+    <div ng-if="!adminCtrl.users || adminCtrl.users.length === 0">
+      No users found.
+    </div>
+  </div>
+</div>
+
+<script>
+  if(localStorage.getItem('isAdmin') !== 'true'){
+    window.location.href = "index.html";
+  }
+
+  angular.module('adminApp', [])
+    .controller('AdminController', ['$http', function($http){
+      var vm = this;
+      var adminToken = localStorage.getItem('adminToken');
+      if(!adminToken){
+        window.location.href = "index.html";
+        return;
+      }
+      vm.users = [];
+
+      $http({
+        method: 'GET',
+        url: 'http://localhost:5000/admin/users',
+        headers: { 'X-Admin-Token': adminToken }
+      }).then(function(response){
+        vm.users = response.data;
+      }, function(error){
+        console.error("Error fetching users: ", error);
+        alert("Unable to fetch users. Please try again later.");
+      });
+
+      vm.viewDetails = function(user){
+        alert("Viewing details for " + user.username);
+      }
+    }]);
+</script>
+
+</body>
+</html>

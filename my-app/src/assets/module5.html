@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="resourcesApp">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cryptography Resources</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* Body & Background */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#6a11cb,#2575fc);
+    background-size: 200% 200%;
+    animation: gradientShift 12s ease infinite;
+}
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating circles */
+.background {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+    animation: float 18s infinite ease-in-out;
+}
+.circle:nth-child(1) { width: 70vw; height: 70vw; top: -30vw; left: -25vw; animation-delay: 0s; }
+.circle:nth-child(2) { width: 60vw; height: 60vw; bottom: -25vw; right: -15vw; animation-delay: 5s; }
+.circle:nth-child(3) { width: 50vw; height: 50vw; top: 60%; left: 65%; animation-delay: 10s; }
+
+@keyframes float {
+    0%,100% { transform: translate(0,0) rotate(0deg); }
+    25% { transform: translate(-20px,20px) rotate(5deg); }
+    50% { transform: translate(10px,-15px) rotate(-5deg); }
+    75% { transform: translate(15px,10px) rotate(3deg); }
+}
+
+/* Container */
+.container {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 25px;
+    padding: 40px;
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transform: translateY(30px);
+    opacity: 0;
+    animation: fadeInUp 1.2s ease forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Heading */
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #ffd700, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Buttons */
+button {
+    padding: 10px 25px;
+    border-radius: 25px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    color: #fff;
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+    transition: all 0.3s ease;
+}
+button:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    transform: scale(1.05);
+}
+
+/* Back to Home button inside container */
+.back-btn {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    padding: 12px;
+    margin-top: 25px;
+    cursor: pointer;
+    width: 50%;
+    transition: all 0.3s ease;
+}
+.back-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+/* Resource list */
+ul {
+    text-align: left;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    padding: 20px;
+    line-height: 1.8;
+    max-height: 400px; /* increased height */
+    width: 100%;       /* full width */
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+    font-size: 1.1rem;
+}
+ul::-webkit-scrollbar {
+    width: 8px;
+}
+ul::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+ul li { margin-bottom: 10px; }
+ul li a {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+ul li a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px #ffd700;
+}
+</style>
+</head>
+<body ng-controller="ResourcesController as resCtrl">
+
+<div class="background">
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+</div>
+
+<div class="container">
+    <h2><i class="fas fa-book"></i> Cryptography Resources</h2>
+    
+    <!-- Load Resources Button -->
+    <button ng-click="resCtrl.load()"><i class="fas fa-download"></i> Load Resources</button>
+
+    <!-- Enlarged Resource Box -->
+    <ul>
+        <li ng-repeat="(title, url) in resCtrl.resources">
+            <a href="{{url}}" target="_blank">{{title}}</a>
+        </li>
+    </ul>
+
+    <!-- Back to Home Button -->
+    <button class="back-btn" onclick="window.location.href='../index.html'">
+        <i class="fas fa-home"></i> Back to Home
+    </button>
+</div>
+
+<script>
+angular.module('resourcesApp',[])
+.controller('ResourcesController',['$http',function($http){
+    var vm = this;
+    vm.resources = {};
+    vm.load = function(){
+        vm.resources = {
+            "Khan Academy - Cryptography": "https://www.khanacademy.org/computing/computer-science/cryptography",
+            "GeeksforGeeks - Cryptography": "https://www.geeksforgeeks.org/cryptography/",
+            "Wikipedia - Cryptography": "https://en.wikipedia.org/wiki/Cryptography",
+            "NIST Cryptography": "https://csrc.nist.gov/projects/cryptography"
+        };
+    };
+}]);
+</script>
+
+</body>
+</html>

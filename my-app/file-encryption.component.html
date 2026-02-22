@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>File Encryption / Decryption</h2>
+
+  <label>Choose File</label>
+  <input type="file" (change)="onFileSelected($event)" />
+
+  <label>Operation</label>
+  <select [(ngModel)]="operation">
+    <option value="encrypt">Encrypt</option>
+    <option value="decrypt">Decrypt</option>
+  </select>
+
+  <label>Key (for decryption only)</label>
+  <input type="text" [(ngModel)]="key" placeholder="Enter AES key if decrypting">
+
+  <button (click)="processFile()">Process</button>
+
+  <div *ngIf="message">
+    <h4>{{ message }}</h4>
+    <p *ngIf="response.key"><b>Key:</b> {{ response.key }}</p>
+    <p *ngIf="response.iv"><b>IV:</b> {{ response.iv }}</p>
+    <pre>{{ response.output_text }}</pre>
+    <a *ngIf="response.output_filename"
+       [href]="'http://localhost:5000/download/' + response.output_filename"
+       download>Download File</a>
+  </div>
+</div>
