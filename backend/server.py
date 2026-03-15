@@ -318,9 +318,6 @@ def dh_simulate():
 def get_resources_route():
     return jsonify(resources.get_resources())
 
-if __name__ == '__main__':
-    print("Registered routes:")
-    for rule in app.url_map.iter_rules():
-        view = app.view_functions.get(rule.endpoint)
-        print(f"{rule} -> endpoint='{rule.endpoint}' module='{view.__module__}' func='{view.__name__}' methods={sorted(rule.methods)}")
-    app.run(host='127.0.0.1', port=5000, debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
