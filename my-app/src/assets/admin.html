@@ -110,7 +110,7 @@
 
       $http({
         method: 'GET',
-        url: 'http://localhost:5000/admin/users',
+        url: 'https://encryption-system-mvqr.onrender.com/admin/users',
         headers: { 'X-Admin-Token': adminToken }
       }).then(function(response){
         vm.users = response.data;
