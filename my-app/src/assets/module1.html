@@ -141,7 +141,7 @@ angular.module('symmetricApp', []).controller('SymmetricController',['$http',fun
     vm.decrypted='';
 
     vm.encrypt=function(){
-        $http.post("http://localhost:5000/symmetric/encrypt",{plaintext:vm.plaintext,algo:vm.algo})
+        $http.post("https://encryption-system-mvqr.onrender.com/symmetric/encrypt",{plaintext:vm.plaintext,algo:vm.algo})
         .then(function(res){
             vm.cipher=res.data.ciphertext;
             vm.key=res.data.key;
@@ -150,7 +150,7 @@ angular.module('symmetricApp', []).controller('SymmetricController',['$http',fun
     };
 
     vm.decrypt=function(){
-        $http.post("http://localhost:5000/symmetric/decrypt",{ciphertext:vm.cipher,key:vm.key,algo:vm.algo})
+        $http.post("https://encryption-system-mvqr.onrender.com/symmetric/decrypt",{ciphertext:vm.cipher,key:vm.key,algo:vm.algo})
         .then(function(res){
             vm.decrypted=res.data.plaintext;
         }).catch(()=>alert("Decryption failed"));
