@@ -185,7 +185,7 @@
             vm.isLoading = true;
             vm.error = null;
 
-            $http.post('http://127.0.0.1:5000/login', {
+            $http.post('https://encryption-system-mvqr.onrender.com/login', {
                 username: vm.username,
                 password: vm.password
             }).then(function(resp){
