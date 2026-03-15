@@ -1,6 +1,0 @@
-C:\xampp\htdocs\myprograms - php programs
-write program (.php)
-browser - localhost/myprograms/prog.php
-html,css,js,php,mysql all combined together
-
-http://localhost/photography_showcase/login.php
