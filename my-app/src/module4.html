@@ -124,7 +124,7 @@ angular.module('dhApp', [])
             return;
         }
 
-        $http.post('http://127.0.0.1:5000/dh_simulate', {P: vm.P, G: vm.G})
+        $http.post('https://encryption-system-mvqr.onrender.com/dh_simulate', {P: vm.P, G: vm.G})
         .then(function(response){
             vm.steps = [];
             let allSteps = response.data.steps;
