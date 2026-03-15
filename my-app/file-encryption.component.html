@@ -21,7 +21,7 @@
     <p *ngIf="response.iv"><b>IV:</b> {{ response.iv }}</p>
     <pre>{{ response.output_text }}</pre>
     <a *ngIf="response.output_filename"
-       [href]="'http://localhost:5000/download/' + response.output_filename"
+       [href]="'https://encryption-system-mvqr.onrender.com/download/' + response.output_filename"
        download>Download File</a>
   </div>
 </div>
