@@ -5,9 +5,9 @@ import base64
 import mysql.connector
 
 conn = mysql.connector.connect(
-    host="localhost",
+    host="mysql-atlb.railway.internal",
     user="root",
-    password="",  # default for XAMPP
+    password="WimQnTTlRrXENFJqeJgfnQrsPRRkwexf",  # default for XAMPP
     database="encryption_db"
 )
 cursor = conn.cursor()
