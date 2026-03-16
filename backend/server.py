@@ -26,10 +26,10 @@ app.logger.setLevel(logging.DEBUG)
 
 # --- Config ---
 DB_CONFIG = {
-    'host': os.environ.get('DB_HOST', 'mysql-atlb.railway.internal'),
-    'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASS', 'WimQnTTlRrXENFJqeJgfnQrsPRRkwexf'),
-    'database': os.environ.get('DB_NAME', 'encryption_db'),
+    'host': os.environ.get('DB_HOST'),
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASS'),
+    'database': os.environ.get('DB_NAME'),
     'port': int(os.environ.get('DB_PORT', 3306))
 }
 ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', 'admin_secret_please_change')
