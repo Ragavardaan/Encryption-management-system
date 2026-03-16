@@ -1,9 +1,9 @@
 import mysql.connector
 
 conn = mysql.connector.connect(
-    host="localhost",
+    host="mysql-atlb.railway.internal",
     user="root",
-    password="",  
+    password="WimQnTTlRrXENFJqeJgfnQrsPRRkwexf",  
     database="encryption_db"
 )
 cursor = conn.cursor()
