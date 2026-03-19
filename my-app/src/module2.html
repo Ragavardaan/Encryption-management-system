@@ -90,7 +90,7 @@ angular.module('rsaApp',[])
     vm.decryptCipherText='';
 
     vm.generateKeys = function(){
-        $http.get('https://encryption-system-mvqr.onrender.com/rsa_keys')
+        $http.get('https://encryption-learning-app.onrender.com/rsa_keys')
         .then(function(res){
             vm.publicKey = res.data.public_key;
             vm.privateKey = res.data.private_key;
@@ -103,7 +103,7 @@ angular.module('rsaApp',[])
     vm.encrypt=function(){
         if(!vm.message){ alert("Enter message"); return; }
         if(!vm.encryptPublicKey){ alert("Paste or generate a public key"); return; }
-        $http.post('https://encryption-system-mvqr.onrender.com/rsa_encrypt',{
+        $http.post('https://encryption-learning-app.onrender.com/rsa_encrypt',{
             message: vm.message,
             public: vm.encryptPublicKey
         })
@@ -114,7 +114,7 @@ angular.module('rsaApp',[])
     vm.decrypt=function(){
         if(!vm.decryptCipherText){ alert("Paste ciphertext to decrypt"); return; }
         if(!vm.decryptPrivateKey){ alert("Paste private key for decryption"); return; }
-        $http.post('https://encryption-system-mvqr.onrender.com/rsa_decrypt',{
+        $http.post('https://encryption-learning-app.onrender.com/rsa_decrypt',{
             cipher: vm.decryptCipherText,
             private: vm.decryptPrivateKey
         })
