@@ -95,7 +95,7 @@ angular.module('loginApp', [])
                 localStorage.setItem('isAdmin', role === 'admin' ? 'true' : 'false');
 
                 // ✅ redirect FIXED (important)
-                window.location.replace('/index.html');
+                window.location.replace('/');
 
             } else {
                 vm.error = resp.data.message || 'Login failed';
