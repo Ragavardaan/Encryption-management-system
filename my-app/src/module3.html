@@ -158,13 +158,13 @@
             formData.append('file', vm.encryptFile);
             formData.append('operation', 'encrypt');
 
-            $http.post('https://encryption-system-mvqr.onrender.com/file/process', formData, {
+            $http.post('https://encryption-learning-app.onrender.com/file/process', formData, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(function(response) {
                 vm.encryptionKey = response.data.key;
                 vm.resultFile = response.data.filename;
-                vm.downloadUrl = 'https://encryption-system-mvqr.onrender.com/file/download/' + 
+                vm.downloadUrl = 'https://encryption-learning-app.onrender.com/file/download/' + 
                                 encodeURIComponent(response.data.filename);
                 vm.encryptError = '';
             }).catch(function(error) {
@@ -187,12 +187,12 @@
             formData.append('operation', 'decrypt');
             formData.append('key', vm.decryptKey);
 
-            $http.post('https://encryption-system-mvqr.onrender.com/file/process', formData, {
+            $http.post('https://encryption-learning-app.onrender.com/file/process', formData, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(function(response) {
                 vm.resultFile = response.data.filename;
-                vm.downloadUrl = 'https://encryption-system-mvqr.onrender.com/file/download/' + 
+                vm.downloadUrl = 'https://encryption-learning-app.onrender.com/file/download/' + 
                                 encodeURIComponent(response.data.filename);
                 vm.decryptError = '';
             }).catch(function(error) {
