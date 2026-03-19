@@ -38,6 +38,10 @@ logger = logging.getLogger(__name__)
 def safe_filename(filename):
     return secure_filename(filename) or "file"
 
+@app.route("/")
+def home():
+    return "API running"
+    
 # --- Admin blueprint ---
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
