@@ -9,8 +9,7 @@ from functools import wraps
 from flask import Flask, request, jsonify, send_from_directory, abort, Blueprint
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import mysql.connector
-
+from db import get_connection
 # Project-specific modules, keep these as needed
 import symmetric
 import asymmetric
@@ -24,14 +23,7 @@ CORS(app, supports_credentials=True)
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
-# --- Config ---
-DB_CONFIG = {
-    'host': os.environ.get('DB_HOST'),
-    'user': os.environ.get('DB_USER'),
-    'password': os.environ.get('DB_PASS'),
-    'database': os.environ.get('DB_NAME'),
-    'port': int(os.environ.get('DB_PORT', 3306))
-}
+
 ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', 'admin_secret_please_change')
 
 # --- Upload / file config ---
@@ -41,24 +33,10 @@ app.config['UPLOAD_FOLDER'] = str(UPLOAD_DIR)
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB
 
 ALLOWED_OPERATIONS = {'encrypt', 'decrypt'}
-
-# (optional) sqlite for uploads bookkeeping
-sqlite_conn = sqlite3.connect(str(Path(__file__).resolve().parent / "file_data.db"), check_same_thread=False)
-c = sqlite_conn.cursor()
-c.execute('''CREATE TABLE IF NOT EXISTS files (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    filename TEXT,
-    operation TEXT
-)''')
-sqlite_conn.commit()
-
 logger = logging.getLogger(__name__)
 
 def safe_filename(filename):
     return secure_filename(filename) or "file"
-
-def get_db_connection():
-    return mysql.connector.connect(**DB_CONFIG)
 
 # --- Admin blueprint ---
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
@@ -78,7 +56,7 @@ def list_users():
     conn = None
     cur = None
     try:
-        conn = get_db_connection()
+        conn = get_connection()
         cur = conn.cursor(dictionary=True)
         cur.execute("""
             SELECT
@@ -128,7 +106,7 @@ def register():
     conn = None
     cursor = None
     try:
-        conn = get_db_connection()
+        conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
         if cursor.fetchone():
@@ -161,7 +139,7 @@ def login():
     conn = None
     cursor = None
     try:
-        conn = get_db_connection()
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (username, hashed_password))
         user = cursor.fetchone()
@@ -196,7 +174,6 @@ def login():
             if conn: conn.close()
         except Exception:
             pass
-
 
 # --- Symmetric / RSA / File / DH / Resources routes kept as before ---
 @app.route('/symmetric/encrypt', methods=['POST'])
