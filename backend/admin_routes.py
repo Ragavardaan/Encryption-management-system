@@ -1,24 +1,13 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
 import os
-import mysql.connector
 import logging
+from db import get_connection
 
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 logger = logging.getLogger(__name__)
 
-DB_CONFIG = {
-    'host': os.environ.get('DB_HOST'),
-    'user': os.environ.get('DB_USER'),
-    'password': os.environ.get('DB_PASS'),
-    'database': os.environ.get('DB_NAME'),
-    'port': int(os.environ.get('DB_PORT', 3306))
-}
-
 ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', 'admin_secret_please_change')
-
-def get_db_connection():
-    return mysql.connector.connect(**DB_CONFIG)
 
 def require_admin(f):
     @wraps(f)
@@ -35,15 +24,15 @@ def list_users():
     conn = None
     cur = None
     try:
-        conn = get_db_connection()
+        conn = get_connection()
         cur = conn.cursor(dictionary=True)
         cur.execute("""
             SELECT
                 id,
                 username,
                 COALESCE(role, 'user') AS role,
-                DATE_FORMAT(last_login, '%%Y-%%m-%%d %%H:%%i:%%s') AS last_login,
-                DATE_FORMAT(created_at, '%%Y-%%m-%%d %%H:%%i:%%s') AS created_at
+                TO_CHAR(last_login, 'YYYY-MM-DD HH24:MI:SS'),
+                TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS'),
             FROM users
             ORDER BY created_at DESC
         """)
