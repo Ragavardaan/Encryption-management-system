@@ -4,187 +4,70 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dashboard - Encryption Management</title>
+
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 
 <style>
-/* Body & background */
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #0f0;
+    background: black;
     overflow-x: hidden;
-    background:black;
-    perspective:1000px;
 }
-
-/* Matrix canvas */
 #matrix {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    z-index:-2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
 }
-
-/* Header */
 header {
     text-align: center;
-    padding: 60px 20px 30px 20px;
+    padding: 60px 20px;
 }
-header h1 {
-    margin: 0;
-    font-size: 2.8em;
-    font-weight: bold;
-    color: #0f0;
-    text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
-    animation: fadeInDown 1.2s ease;
-}
-header p {
-    font-size: 1.2em;
-    margin-top: 10px;
-    color: #0f0;
-    text-shadow: 0 0 3px #0f0;
-    animation: fadeInDown 1.6s ease;
-}
-.admin-btn {
-    display: inline-block;
-    padding: 10px 22px;
-    margin-top: 20px;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #4CAF50, #45a049);
-    color: #000;
-    font-weight: bold;
-    text-decoration: none;
-    box-shadow: 0 0 10px #0f0;
-    transition: all 0.3s ease;
-}
-.admin-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #0f0;
-}
-
-/* Intro section */
-.intro {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-size: 1.1em;
-    color: #0f0;
-    text-shadow: 0 0 3px #0f0;
-    animation: fadeIn 2s ease;
-}
-
-/* Cards */
 .cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 50px 20px;
     gap: 20px;
-    animation: fadeInUp 2s ease;
 }
 .card {
     background: rgba(0,0,0,0.7);
-    border-radius: 15px;
-    width: 240px;
-    padding: 25px;
+    padding: 20px;
+    border-radius: 10px;
+    width: 220px;
     text-align: center;
-    box-shadow: 0 0 15px #0f0, 0 0 30px #0f0 inset;
-    transition: transform 0.3s, box-shadow 0.3s;
 }
-.card h3 {
-    color: #0f0;
-    text-shadow: 0 0 5px #0f0;
-}
-.card p {
-    color: #0f0;
-    font-size: 0.95em;
-    min-height: 90px;
-    text-shadow: 0 0 3px #0f0;
-}
-.card:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 25px #0f0, 0 0 50px #0f0 inset;
-}
-.card button {
-    margin-top: 10px;
-    padding: 10px 18px;
-    background: linear-gradient(90deg, #2575fc, #6a11cb);
-    color: #0f0;
-    border: none;
-    border-radius: 25px;
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 0 0 5px #0f0;
-    transition: all 0.3s ease;
-}
-.card button:hover {
-    background: linear-gradient(90deg, #6a11cb, #2575fc);
-    box-shadow: 0 0 20px #0f0;
-}
-
-/* Logout button */
 .logout-btn {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 10px 22px;
-    border-radius: 25px;
-    border: none;
-    background: linear-gradient(90deg, #ff4b2b, #ff416c);
-    color: #0f0;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 10px #0f0;
-    transition: transform 0.3s;
-}
-.logout-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #0f0;
-}
-
-/* Animations */
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-40px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 </style>
 
 <script>
-// Redirect to login if not logged in
-if (!localStorage.getItem('savedUsername') || !localStorage.getItem('savedPassword')) {
+// ✅ FIXED LOGIN CHECK (ONLY username)
+if (!localStorage.getItem('savedUsername')) {
     window.location.href = '/login.html';
 }
 </script>
 
 </head>
+
 <body ng-controller="HomeController as homeCtrl">
 
 <canvas id="matrix"></canvas>
 
 <header>
     <h1>Encryption Management System</h1>
-    <p>Secure your data with intelligence</p>
-    <div id="adminSection" style="display: none;">
-        <a href="assets/admin.html" class="admin-btn">Admin Dashboard</a>
+    <p>Secure your data</p>
+
+    <div id="adminSection" style="display:none;">
+        <a href="assets/admin.html">Admin Dashboard</a>
     </div>
 </header>
-
-<div class="intro">
-    <p>Welcome to the Encryption Management Dashboard.  
-    Explore various encryption modules, simulate algorithms, and understand how cryptographic techniques protect your data.  
-    Click a module below to start learning and experimenting.</p>
-</div>
 
 <div class="cards">
     <div class="card" ng-repeat="module in homeCtrl.modules">
@@ -197,62 +80,70 @@ if (!localStorage.getItem('savedUsername') || !localStorage.getItem('savedPasswo
 <button class="logout-btn" onclick="logout()">Logout</button>
 
 <script>
+// ✅ FIXED LOGOUT
 function logout() {
-    localStorage.removeItem('savedUsername');
-    localStorage.removeItem('savedPassword');
-    localStorage.removeItem('isAdmin');
+    localStorage.clear();
     window.location.href = '/login.html';
 }
 
-// Show admin button if user is admin
-window.onload = function() {
-    if(localStorage.getItem('isAdmin') === 'true') {
+// ✅ ADMIN CHECK
+window.onload = function () {
+    if (localStorage.getItem('isAdmin') === 'true') {
         document.getElementById('adminSection').style.display = 'block';
     }
-}
+};
 </script>
 
 <script>
 angular.module('homeApp', [])
 .controller('HomeController', ['$window', function($window){
     var vm = this;
-    vm.modules = [
-        { title: "Symmetric Encryption", description: "Learn AES & DES encryption in action.", link: "assets/module1.html" },
-        { title: "RSA Encryption", description: "Simulate public/private key encryption.", link: "assets/module2.html" },
-        { title: "File Encryption", description: "Encrypt and decrypt sensitive files safely.", link: "assets/module3.html" },
-        { title: "Key Exchange", description: "Learn Diffie-Hellman key sharing.", link: "assets/module4.html" },
-        { title: "Educational Resources", description: "Access cryptography tutorials and guides.", link: "assets/module5.html" }
-    ];
-    vm.openModule = function(link) { $window.location.href = link; };
-}]);
 
-/* MATRIX RAIN EFFECT */
+    vm.modules = [
+        { title: "Symmetric Encryption", description: "AES & DES", link: "assets/module1.html" },
+        { title: "RSA Encryption", description: "Public key crypto", link: "assets/module2.html" },
+        { title: "File Encryption", description: "Secure files", link: "assets/module3.html" },
+        { title: "Key Exchange", description: "Diffie-Hellman", link: "assets/module4.html" },
+        { title: "Resources", description: "Learn crypto", link: "assets/module5.html" }
+    ];
+
+    vm.openModule = function(link) {
+        $window.location.href = link;
+    };
+}]);
+</script>
+
+<script>
+// MATRIX EFFECT
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%";
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const fontSize = 16;
 const columns = canvas.width / fontSize;
-const drops = [];
-for(let x=0;x<columns;x++) drops[x] = Math.random()*canvas.height;
-function drawMatrix(){
-    ctx.fillStyle='rgba(0,0,0,0.05)';
+const drops = Array(Math.floor(columns)).fill(1);
+
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#0f0';
-    ctx.font=fontSize+'px monospace';
-    for(let i=0;i<drops.length;i++){
-        const text = letters.charAt(Math.floor(Math.random()*letters.length));
-        ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-        drops[i] +=1;
-        if(drops[i]*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
-    }
+
+    ctx.fillStyle = "#0f0";
+    ctx.font = fontSize + "px monospace";
+
+    drops.forEach((y, i) => {
+        const text = letters[Math.floor(Math.random()*letters.length)];
+        ctx.fillText(text, i * fontSize, y * fontSize);
+
+        if (y * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    });
 }
-setInterval(drawMatrix,35);
-window.addEventListener('resize',()=>{
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+
+setInterval(draw, 35);
 </script>
 
 </body>
