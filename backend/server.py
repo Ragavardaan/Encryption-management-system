@@ -63,8 +63,8 @@ def list_users():
                 id,
                 username,
                 COALESCE(role, 'user') AS role,
-                DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at,
-                DATE_FORMAT(last_login, '%Y-%m-%d %H:%i:%s') AS last_login
+                TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS'),
+                TO_CHAR(last_login, 'YYYY-MM-DD HH24:MI:SS')
             FROM users
             ORDER BY created_at DESC
         """)
