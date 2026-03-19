@@ -48,10 +48,17 @@ header {
 </style>
 
 <script>
-// ✅ FIXED LOGIN CHECK (ONLY username)
-if (!localStorage.getItem('savedUsername')) {
-    window.location.href = '/login.html';
-}
+/* ✅ SAFE LOGIN CHECK (NO LOOP) */
+(function() {
+    const user = localStorage.getItem('savedUsername');
+
+    if (!user) {
+        // small delay prevents flicker/loop
+        setTimeout(() => {
+            window.location.replace('/login.html');
+        }, 50);
+    }
+})();
 </script>
 
 </head>
@@ -62,10 +69,10 @@ if (!localStorage.getItem('savedUsername')) {
 
 <header>
     <h1>Encryption Management System</h1>
-    <p>Secure your data</p>
+    <p>Secure your data with intelligence</p>
 
     <div id="adminSection" style="display:none;">
-        <a href="assets/admin.html">Admin Dashboard</a>
+        <a href="/assets/admin.html">Admin Dashboard</a>
     </div>
 </header>
 
@@ -80,13 +87,13 @@ if (!localStorage.getItem('savedUsername')) {
 <button class="logout-btn" onclick="logout()">Logout</button>
 
 <script>
-// ✅ FIXED LOGOUT
+/* ✅ LOGOUT FIX */
 function logout() {
     localStorage.clear();
-    window.location.href = '/login.html';
+    window.location.replace('/login.html');
 }
 
-// ✅ ADMIN CHECK
+/* ✅ ADMIN BUTTON CONTROL */
 window.onload = function () {
     if (localStorage.getItem('isAdmin') === 'true') {
         document.getElementById('adminSection').style.display = 'block';
@@ -100,11 +107,11 @@ angular.module('homeApp', [])
     var vm = this;
 
     vm.modules = [
-        { title: "Symmetric Encryption", description: "AES & DES", link: "assets/module1.html" },
-        { title: "RSA Encryption", description: "Public key crypto", link: "assets/module2.html" },
-        { title: "File Encryption", description: "Secure files", link: "assets/module3.html" },
-        { title: "Key Exchange", description: "Diffie-Hellman", link: "assets/module4.html" },
-        { title: "Resources", description: "Learn crypto", link: "assets/module5.html" }
+        { title: "Symmetric Encryption", description: "AES & DES", link: "/assets/module1.html" },
+        { title: "RSA Encryption", description: "Public key crypto", link: "/assets/module2.html" },
+        { title: "File Encryption", description: "Secure files", link: "/assets/module3.html" },
+        { title: "Key Exchange", description: "Diffie-Hellman", link: "/assets/module4.html" },
+        { title: "Resources", description: "Learn crypto", link: "/assets/module5.html" }
     ];
 
     vm.openModule = function(link) {
@@ -114,16 +121,20 @@ angular.module('homeApp', [])
 </script>
 
 <script>
-// MATRIX EFFECT
+/* MATRIX EFFECT */
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = Array(Math.floor(columns)).fill(1);
+const columns = Math.floor(canvas.width / fontSize);
+const drops = Array(columns).fill(1);
 
 function draw() {
     ctx.fillStyle = "rgba(0,0,0,0.05)";
@@ -144,6 +155,8 @@ function draw() {
 }
 
 setInterval(draw, 35);
+
+window.addEventListener('resize', resizeCanvas);
 </script>
 
 </body>
