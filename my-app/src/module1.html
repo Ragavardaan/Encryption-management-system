@@ -55,7 +55,7 @@ button:hover{transform:translateY(-3px);box-shadow:0 6px 15px rgba(0,0,0,0.2)}
 angular.module('symmetricApp', []).controller('SymmetricController',['$http',function($http){
 var vm=this;vm.algo='AES';vm.plaintext='';vm.key='';vm.cipher='';vm.decrypted='';
 vm.encrypt=function(){
-    $http.post("https://encryption-system-mvqr.onrender.com/symmetric/encrypt",{plaintext:vm.plaintext,algo:vm.algo})
+    $http.post("https://encryption-learning-app.onrender.com/symmetric/encrypt",{plaintext:vm.plaintext,algo:vm.algo})
     .then(function(res){
         vm.cipher=res.data.ciphertext;
         vm.key=res.data.key;
@@ -63,7 +63,7 @@ vm.encrypt=function(){
     }).catch(()=>alert("Error connecting to backend"));
 };
 vm.decrypt=function(){
-    $http.post("https://encryption-system-mvqr.onrender.com/symmetric/decrypt",{ciphertext:vm.cipher,key:vm.key,algo:vm.algo})
+    $http.post("https://encryption-learning-app.onrender.com/symmetric/decrypt",{ciphertext:vm.cipher,key:vm.key,algo:vm.algo})
     .then(function(res){
         vm.decrypted=res.data.plaintext;
     }).catch(()=>alert("Decryption failed"));
