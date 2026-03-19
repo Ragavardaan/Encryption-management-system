@@ -197,7 +197,7 @@
                     localStorage.setItem('isAdmin', role === 'admin' ? 'true' : 'false');
                     if (resp.data.admin_token) localStorage.setItem('adminToken', resp.data.admin_token);
                     else localStorage.removeItem('adminToken');
-                    $window.location.href = 'index.html';
+                    $window.location.href = '/';
                 } else {
                     vm.error = resp.data && resp.data.message ? resp.data.message : 'Login failed';
                 }
